@@ -20,9 +20,10 @@ function App() {
       url: inputUrl,
     };
 
-    setLinks([...links, newLink]);
+    //when user clicks add after entering url
+    setLinks([...links, newLink]); // when we call this means we are adding a new link
 
-    setInputUrl("");
+    setInputUrl(""); // clears the box
   };
 
   const handleDelete = (idToDelete) => {
@@ -67,4 +68,3 @@ function App() {
 }
 
 export default App;
-

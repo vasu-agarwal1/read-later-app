@@ -8,7 +8,7 @@ function LinkCard({ title, url, onDelete }) {
         Visit
       </a>
       <button onClick={onDelete} className="delete-btn">
-        Delete
+        ❌
       </button>
     </div>
   );
