@@ -1,33 +1,34 @@
-import React, {useState} from "react";
+import React, { useEffect, useState } from "react";
 import LinkCard from "./components/LinkCard";
 
-const dummyLinks = [
-  { id: 1, title: "JavaScript Info", url: "https://javascript.info" },
-  { id: 2, title: "MDN Docs", url: "https://developer.mozilla.org" },
-];
-
-
-
 function App() {
+  const storedLinks = JSON.parse(localStorage.getItem("readLinks")) || [];
+  const [links, setLinks] = useState(storedLinks);
+  const [inputUrl, setInputUrl] = useState("");
 
-  const [links, setLinks] = useState(dummyLinks);
-
-  const [inputUrl, setInputUrl] = useState("")
+  // Save to localStorage whenever links change
+  useEffect(() => {
+    localStorage.setItem("readLinks", JSON.stringify(links));
+  }, [links]);
 
   const handleAdd = () => {
+    if (inputUrl.trim() === "") return;
 
-   if (inputUrl.trim() === "") return; // ignore empty input
+    const newLink = {
+      id: Date.now(),
+      title: inputUrl,
+      url: inputUrl,
+    };
 
-  const newLink = {
-    id: Date.now(), // unique id
-    title: inputUrl, // using URL as title for now
-    url: inputUrl,
+    setLinks([...links, newLink]);
+
+    setInputUrl("");
   };
 
-  setLinks([links, newLink]); // update the list
-  setInputUrl(""); // clear the input field
-};
-
+  const handleDelete = (idToDelete) => {
+    const updatedLinks = links.filter((link) => link.id !== idToDelete);
+    setLinks(updatedLinks);
+  };
 
   return (
     <div className="app-container">
@@ -37,35 +38,33 @@ function App() {
 
       <main>
         <div className="input-section">
-        <input
-         type="text"
-          placeholder="Enter a URL"
-           value={inputUrl}
+          <input
+            type="text"
+            placeholder="Enter a URL"
+            value={inputUrl}
             onChange={(e) => setInputUrl(e.target.value)}
           />
-
-          <button onClick = {handleAdd}>Add</button>
-          
+          <button onClick={handleAdd}>Add</button>
         </div>
 
         <ul className="read-list">
-          {/* Ternary operator */}
-         {links.length > 0 ? (
-           links.map((link) => (
-         <LinkCard
-          key={link.id}
-          title={link.title} 
-          url={link.url}
-           />
-    ))
-  ) : (
-    <p>No links saved yet.</p>
-  )}
-      </ul>
-
+          {links.length > 0 ? (
+            links.map((link) => (
+              <LinkCard
+                key={link.id}
+                title={link.title}
+                url={link.url}
+                onDelete={() => handleDelete(link.id)}
+              />
+            ))
+          ) : (
+            <p>No links saved yet.</p>
+          )}
+        </ul>
       </main>
     </div>
   );
 }
 
 export default App;
+
